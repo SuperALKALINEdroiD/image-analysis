@@ -8,6 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google-cloud/vision": "^3.1.4",
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "epic-spinners": "^2.0.0",
     "vue": "^3.3.4",
     "vue-upload-component": "^2.8.23"
   },
