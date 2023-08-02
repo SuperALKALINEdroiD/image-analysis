@@ -1,20 +1,28 @@
 <template>
-	<div class="spinner-overlay" v-if="loading">
+	<div class="loading-icon" v-if="loading">
 		<intersecting-circles-spinner class="apiLoading" :size="80" />
 	</div>
 	<div>
 		<div class="image-uploader" :class="imagePresent">
-			<input type="file" @change="onFileChanged($event)" accept="image/*" capture />
+			<input type="file" @change="onFileChanged($event)" accept="image/*" />
 			<span v-if="imagePresent === 'N'"> Click here to upload Image</span>
 			<span v-else>Upload Another Image</span>
 		</div>
 		<div class="image-preview-container">
 			<img v-if="previewImage" :src="previewImage" alt="Preview" />
-			<ol v-if="dominantColor">
-				<li v-for="color in dominantColor">
-					{{ color }}
-				</li>
-			</ol>
+			<section>
+				<ul v-if="dominantColor"> Dominant Colors
+					<li v-for="color in dominantColor">
+						{{ color }}
+					</li>
+				</ul>
+				<ul v-if="dominantColorScore">
+					<li>Color Score: {{ dominantColorScore }}</li>
+				</ul>
+				<ul v-if="objects">
+					<li>{{ objects }} </li>
+				</ul>
+			</section>
 		</div>
 	</div>
 </template>
@@ -34,6 +42,7 @@ export default {
 			base64Image: '',
 			dominantColor: null,
 			dominantColorScore: 0,
+			objects: null,
 			loading: false
 		};
 	},
@@ -79,7 +88,10 @@ export default {
 							{
 								"maxResults": 1,
 								"type": "IMAGE_PROPERTIES"
-							},
+							}, {
+								"maxResults": 1,
+								"type": "OBJECT_LOCALIZATION"
+							}
 						]
 					}
 				]
@@ -99,9 +111,13 @@ export default {
 			axios.request(config)
 				.then((response) => {
 					this.loading = false;
-					console.log(Object.keys(response));
 					this.dominantColor = Object.keys(response.data.responses[0].imagePropertiesAnnotation.dominantColors.colors[0].color);
 					this.dominantColorScore = response.data.responses[0].imagePropertiesAnnotation.dominantColors.colors[0].score;
+					try {
+						this.objects = "Identified Object: " + response.data.responses[0].localizedObjectAnnotations[0].name;
+					} catch (exception) {
+						this.objects = "Could not identify object";
+					}
 				})
 				.catch((error) => {
 					this.loading = false;
@@ -164,14 +180,14 @@ img {
 	display: flex;
 }
 
-.image-preview-container ol {
+.image-preview-container ul {
 	margin-left: 10px;
 	font-size: 18px;
 	padding-top: 3.5rem;
 	padding-left: 3.5rem;
 }
 
-.spinner-overlay {
+.loading-icon {
 	position: fixed;
 	top: 0;
 	left: 0;
