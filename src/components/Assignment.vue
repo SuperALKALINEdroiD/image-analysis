@@ -16,9 +16,13 @@
 						{{ color }}
 					</li>
 				</ul>
+			</section>
+			<section>
 				<ul v-if="dominantColorScore">
 					<li>Color Score: {{ dominantColorScore }}</li>
 				</ul>
+			</section>
+			<section>
 				<ul v-if="objects">
 					<li>{{ objects }} </li>
 				</ul>
@@ -178,13 +182,19 @@ img {
 
 .image-preview-container {
 	display: flex;
+	max-width: 50%;
+	align-items: flex-start
 }
 
-.image-preview-container ul {
+.image-preview-container section {
 	margin-left: 10px;
 	font-size: 18px;
 	padding-top: 3.5rem;
 	padding-left: 3.5rem;
+}
+
+.image-preview-container section {
+	flex-direction: row;
 }
 
 .loading-icon {
@@ -198,5 +208,4 @@ img {
 	justify-content: center;
 	align-items: center;
 	z-index: 2;
-}
-</style>
+}</style>
